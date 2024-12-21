@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+  labels:
+    app: postgres
+    type: server
+  namespace: default
+
+spec:
+  selector:
+      matchLabels:
+        app: postgres 
+        type: server
+
+  template:
+    metadata:
+      labels:
+        app: postgres
+        type: server
+      namespace: default
+
+    spec:
+      containers:
+        - name: postgres-container
+          image: postgres:16-bullseye
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432        
+          volumeMounts:
+            - name: vol-postgres 
+              mountPath: /var/lib/postgresql/data
+          resources:
+            limits:
+              memory: 4096Mi
+              cpu: "4"
+            requests:
+              memory: 2048Mi
+              cpu: "1"
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: postgres_password
+            - name: PGDATA
+              value: /var/lib/postgresql/data
+            - name: TZ
+              value: Europe/Budapest
+            - name: PGTZ
+              value: Europe/Budapest
+      restartPolicy: Always
+
+      volumes:
+        - name: vol-postgres 
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+      # volumes:
+      #   - name: vol-postgres
+      #     hostPath:
+      #       path: /private/var/rancher/postgresql/pg16
+      
+  replicas: 1

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pg-timescaledb 
+  labels:
+    app: pg-timescaledb
+spec:
+  type: NodePort
+  ports:
+    - name: pg17-tsdb
+      port: 5432
+      targetPort: 5432
+  selector:
+    app: pg-timescaledb 
+    type: server

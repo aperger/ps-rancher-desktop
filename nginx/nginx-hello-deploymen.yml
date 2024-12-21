@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-hello-deployment
+  labels:
+    app: nginx-hello
+    type: front-end
+  namespace: default
+
+spec:
+  selector:
+      matchLabels:
+        app: nginx-hello 
+        type: front-end
+
+  template:
+    metadata:
+      labels:
+        app: nginx-hello
+        type: front-end
+      namespace: default
+
+    spec:
+      containers:
+        - name: nginx-hello-container
+          image: nginx:latest
+          imagePullPolicy: IfNotPresent          
+          volumeMounts:
+            - name: vol-nginx-hello
+              mountPath: /usr/share/nginx/html
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "1"
+            requests:
+              memory: 256Mi
+              cpu: "0.2"
+      restartPolicy: Always
+
+      volumes:
+        - name: vol-nginx-hello 
+          persistentVolumeClaim:
+            claimName: nginx-hello-volume-claim # Working, not dynamic binding (volume is pre-defined), but writable under localhost (mean host OS of Rancher desktop -> macOS/Windows) 
+            # claimName: nginx-hello-volume-claim-localpath # Working, dynamic allocation, but this path is writable by root user of host (OS executed by qemu, host of kubernetes clustre)
+            # claimName: nginx-hello-volume-claim-nfs # NOT working, see error in YAML
+          # hostPath:
+          #   path: /Users/klm96551/rancher/volumes/webroot
+      
+  replicas: 1

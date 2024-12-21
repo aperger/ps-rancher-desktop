@@ -1,0 +1,31 @@
+# Install nfs-subdir-external-provisioner using helm
+# Ref.: https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/blob/master/charts/nfs-subdir-external-provisioner/README.md
+
+# Install helm package manager with snap
+# Ref.: https://helm.sh/docs/intro/install/
+sudo snap install helm --classic
+
+
+# Add repository
+# Ref.: https://helm.sh/docs/intro/quickstart/
+helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+helm repo update
+
+
+# Search in repositories
+helm search repo nfs
+
+
+# Show all information and parameters about a chart
+helm show all nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+
+
+# Install nfs-subdir-external-provisioner using helm
+helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+    --set nfs.server=host.lima.internal \
+    --set nfs.path=/private/var/rancher/nfs/pv/ \
+    --set nfs.mountOptions='{resvport,rw,nfsvers=3}'
+
+
+# List installed helm charts
+helm list

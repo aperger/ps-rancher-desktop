@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-timescaledb
+  labels:
+    app: pg-timescaledb
+    type: server
+  namespace: default
+
+spec:
+  selector:
+      matchLabels:
+        app: pg-timescaledb 
+        type: server
+  template:
+    metadata:
+      labels:
+        app: pg-timescaledb
+        type: server
+      namespace: default
+
+    spec:
+      containers:
+        - name: pg-timescaledb-container
+          image: timescale/timescaledb:2.17.2-pg17
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432        
+          volumeMounts:
+            - name: vol-pg-timescaledb 
+              mountPath: /var/lib/postgresql/data # for image -> timescaledb
+          resources:
+            limits:
+              memory: 4096Mi
+              cpu: "4"
+            requests:
+              memory: 2048Mi
+              cpu: "1"
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secrets
+                  key: postgres_password
+            - name: PGDATA
+              value: /var/lib/postgresql/data
+            - name: TZ
+              value: Europe/Budapest
+            - name: PGTZ
+              value: Europe/Budapest
+      restartPolicy: Always
+
+      volumes:
+        - name: vol-pg-timescaledb 
+          persistentVolumeClaim:
+            claimName: pg-timescaledb-pvc
+      
+  replicas: 1

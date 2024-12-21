@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-hello-volume-claim-nfs
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: nfs-client
+
+
+# permission denied:
+# 32s (x7 over 64s)       Warning   FailedMount              Pod/nfs-subdir-external-provisioner-6569c4f464-29fv5    MountVolume.SetUp failed for volume "pv-nfs-subdir-external-provisioner" : mount failed: exit status 255
+# Mounting command: mount
+# Munting arguments: -t nfs -o nfsvers=3 host.lima.internal:/private/var/rancher/nfs/pv/ /var/lib/kubelet/pods/0d1774d3-1a2b-474e-b7a3-cc215bc55620/volumes/kubernetes.io~nfs/pv-nfs-subdir-external-provisioner
+# Output: mount: mounting host.lima.internal:/private/var/rancher/nfs/pv/ on /var/lib/kubelet/pods/0d1774d3-1a2b-474e-b7a3-cc215bc55620/volumes/kubernetes.io~nfs/pv-nfs-subdir-external-provisioner failed: Permission denied
+
+
+

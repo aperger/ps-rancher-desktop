@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ngix-hello-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure 
+spec:
+  # defaultBackend:
+  #   service:
+  #     name: kubernetes
+  #     port:
+  #       number: 443
+  ingressClassName: traefik
+  rules:
+  # add "127.0.0.1 nginx-hello.rancher.local" line into /etc/hosts file in local environment
+  - host: nginx-hello.rancher.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: nginx-hello-service
+            port:
+              number: 30080
+        path: /
+        pathType: Prefix

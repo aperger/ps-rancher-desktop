@@ -1,0 +1,20 @@
+#version: '3.9'
+services:
+  timescaledb:
+    image: timescale/timescaledb:2.17.2-pg16
+    shm_size: 128mb
+    container_name: 'timescaledb'
+    environment:
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_PASSWORD: Passw0rd
+    volumes:
+    - type: bind
+      source: /private/var/rancher/postgresql
+      target: /var/lib/postgresql/data
+    ports:
+    - '5432:5432'
+volumes:
+  pgData:
+# networks:
+#   ps_services:
+#     driver: bridge

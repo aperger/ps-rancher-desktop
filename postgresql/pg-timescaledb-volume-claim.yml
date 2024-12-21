@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pg-timescaledb-pv
+  labels:
+    type: local
+    app: pg-timescaledb
+spec:
+  storageClassName: local-path
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 50Gi
+  hostPath:
+    path: /Users/klm96551/rancher/volumes/postgres@17
+    type: DirectoryOrCreate
+  persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pg-timescaledb-pvc
+  namespace: default
+  labels:
+    type: local
+    app: pg-timescaledb
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  volumeName: pg-timescaledb-pv
